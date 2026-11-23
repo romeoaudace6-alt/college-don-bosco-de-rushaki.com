@@ -1,5 +1,14 @@
 <?php
 session_start();
+if (isset($_SESSION['user_id'])) {
+    if ($_SESSION['role'] === 'admin') {
+        header('Location: admin/index.php');
+        exit;
+    } elseif ($_SESSION['role'] === 'editor') {
+        header('Location: editor/index.php');
+        exit;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="rw">
@@ -12,7 +21,11 @@ session_start();
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #062f0b;
+      background-color: #0d1f1a;
+      background-image: url('assets/images/hero.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -20,8 +33,14 @@ session_start();
       padding: 1rem;
       color: #fff;
     }
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 31, 26, 0.85);
+      z-index: 1;
+    }
     .login-card {
-      background-color: #133923;
+      background-color: #122a23;
       border: 1px solid #1f4a3d;
       padding: 3rem 2.5rem;
       border-radius: 24px;
@@ -30,12 +49,13 @@ session_start();
       box-shadow: 0 20px 60px rgba(0,0,0,0.5);
       text-align: center;
       position: relative;
+      z-index: 2;
     }
     .logo-container {
-      width: 80px;
-      height: 80px;
+      width: 70px;
+      height: 70px;
       background-color: #1b4332;
-      border-radius: 20px;
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -50,15 +70,14 @@ session_start();
       padding: 5px;
     }
     h2 {
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: 700;
       color: #fff;
       margin-bottom: 0.5rem;
-      letter-spacing: -0.5px;
     }
     .subtitle {
       color: #8ba89e;
-      font-size: 1rem;
+      font-size: 0.95rem;
       margin-bottom: 2.5rem;
     }
     .form-group {
@@ -77,10 +96,10 @@ session_start();
     }
     .input-wrapper input {
       width: 100%;
-      padding: 1rem 1.2rem;
+      padding: 0.9rem 1rem;
       background-color: transparent;
       border: 1px solid #2d6a4f;
-      border-radius: 12px;
+      border-radius: 10px;
       color: #fff;
       font-size: 0.95rem;
       font-family: inherit;
@@ -92,8 +111,7 @@ session_start();
     .input-wrapper input:focus {
       outline: none;
       border-color: #52b788;
-      box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.15);
-      background-color: #0d1f1a;
+      box-shadow: 0 0 0 2px rgba(82, 183, 136, 0.2);
     }
     .toggle-password {
       position: absolute;
@@ -102,10 +120,9 @@ session_start();
       transform: translateY(-50%);
       cursor: pointer;
       color: #8ba89e;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       background: none;
       border: none;
-      transition: 0.3s;
     }
     .toggle-password:hover {
       color: #fff;
@@ -120,33 +137,32 @@ session_start();
     .options label {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
       color: #8ba89e;
       cursor: pointer;
     }
     .options input[type="checkbox"] {
       accent-color: #52b788;
-      width: 16px;
-      height: 16px;
+      width: 15px;
+      height: 15px;
     }
     .options a {
       color: #52b788;
       text-decoration: none;
       transition: 0.3s;
-      font-weight: 500;
     }
     .options a:hover {
       color: #fff;
     }
     .btn-submit {
       width: 100%;
-      padding: 1.1rem;
+      padding: 1rem;
       background-color: #2d9e65;
       color: #fff;
       border: none;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 1.05rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
       cursor: pointer;
       transition: 0.3s;
       display: flex;
@@ -157,95 +173,96 @@ session_start();
     .btn-submit:hover {
       background-color: #238553;
       transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(45, 158, 101, 0.2);
     }
     .switch-text {
       margin-top: 2rem;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: #8ba89e;
     }
     .switch-text a {
       color: #fff;
       font-weight: 600;
       text-decoration: none;
-      margin-left: 0.3rem;
-      transition: 0.3s;
     }
     .switch-text a:hover {
-      color: #52b788;
+      text-decoration: underline;
     }
-    .bottom-arrow {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: #fff;
-      background-color: #122a23;
-      border: 1px solid #2d6a4f;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0.7;
-      text-decoration: none;
-      transition: 0.3s;
+    .error-msg {
+      background-color: #4a1c1c;
+      color: #ff8a8a;
+      border: 1px solid #7a2e2e;
+      padding: 0.8rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+      text-align: left;
     }
-    .bottom-arrow:hover {
-      opacity: 1;
-      background-color: #1b4332;
+    .hint {
+      margin-top: 1.5rem;
+      padding: 0.8rem;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      font-size: 0.7rem;
+      color: #8ba89e;
+      text-align: left;
     }
+    .hint strong { color: #d1e0d9; }
   </style>
 </head>
 <body>
 
+  <div class="overlay"></div>
+
   <div class="login-card">
     <div class="logo-container">
-      <img src="assets/images/logo.png" alt="Logo">
+      <img src="assets/images/logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/50/1b4332/52b788?text=DB'">
     </div>
 
-    <h2>Welcome back</h2>
-    <p class="subtitle">Login into your account</p>
+    <h2>Murakaza Neza</h2>
+    <p class="subtitle">Injira muri konti yawe</p>
+
+    <?php if (isset($_GET['error'])): ?>
+      <div class="error-msg">❌ Username cyangwa Password si byo!</div>
+    <?php endif; ?>
 
     <form action="api/login_process.php" method="POST">
       
       <div class="form-group">
         <label>Username</label>
         <div class="input-wrapper">
-          <input type="text" name="username" placeholder="enter your username" required>
+          <input type="text" name="username" placeholder="Andika username yawe" required>
         </div>
       </div>
 
       <div class="form-group">
         <label>Password</label>
         <div class="input-wrapper">
-          <input type="password" name="password" id="passwordInput" 
-          placeholder="Enter your password" required>
-          <button type="button" class="toggle-password" onclick="togglePassword()">
-            👁️
-          </button>
+          <input type="password" name="password" id="passwordInput" placeholder="Andika password yawe" required>
+          <button type="button" class="toggle-password" onclick="togglePassword()">👁️</button>
         </div>
       </div>
 
       <div class="options">
         <label>
-          <input type="checkbox" name="remember"> remember me
+          <input type="checkbox" name="remember"> Nukunde
         </label>
-        <a href="#">forgot password?</a>
+        <a href="#">Wibagiwe password?</a>
       </div>
 
       <button type="submit" class="btn-submit">
-        Login <span>→</span>
+        Injira <span>→</span>
       </button>
     </form>
 
     <p class="switch-text">
-    don't have an account? <a href="#">Sign up</a>
+      Nta konti ufite? <a href="#">Saba konti</a>
     </p>
-  </div>
 
-  <a href="#" class="bottom-arrow">↓</a>
+    <div class="hint">
+      <strong>Admin:</strong> donbosco_admin / Admin@2026<br>
+      <strong>Editor:</strong> donbosco_editor / Editor@2026
+    </div>
+  </div>
 
   <script>
     function togglePassword() {

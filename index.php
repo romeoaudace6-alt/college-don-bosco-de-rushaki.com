@@ -262,7 +262,7 @@ $galleries = $db->query("SELECT * FROM gallery ORDER BY id DESC")->fetch_all(MYS
             <li><a href="#ahabanza" data-rw="Ahabanza" data-en="Home">Ahabanza</a></li>
             <li><a href="#amashuri" data-rw="Amashuri" data-en="Programs">Amashuri</a></li>
             <li><a href="#ibyerekeye" data-rw="Ibyerekeye" data-en="About">Ibyerekeye</a></li>
-            <li><a href="login.php" data-rw="Injira (Admin/Editor)" data-en="Login (Admin/Editor)">Injira (Admin/Editor)</a></li>
+            <li><a href="login.php" data-rw="Injira (Admin/Editor)" data-en="Login (Admin/Editor)">Injira </a></li>
           </ul>
         </div>
         <div class="footer-col">
